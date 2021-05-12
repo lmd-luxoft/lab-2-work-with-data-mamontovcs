@@ -8,54 +8,48 @@ namespace Monopoly
 {
     class Monopoly
     {
-        public List<Tuple<string, int>> players = new List<Tuple<string, int>>();
-        public List<Tuple<string, Monopoly.Type, int, bool>> fields = new List<Tuple<string, Type, int, bool>>();
-        public Monopoly(string[] p, int v)
+        public List<Player> players = new List<Player>();
+        public List<Field> fields = new List<Field>();
+
+        public Monopoly(string[] playersNames)
         {
-            for (int i = 0; i < v; i++)
+            for (int i = 0; i < playersNames.Length; i++)
             {
-                players.Add(new Tuple<string,int>(p[i], 6000));     
+                players.Add(new Player() { Name = playersNames[i], Money = 6000 });
             }
-            fields.Add(new Tuple<string, Monopoly.Type, int, bool>("Ford", Monopoly.Type.AUTO, 0, false));
-            fields.Add(new Tuple<string, Monopoly.Type, int, bool>("MCDonald", Monopoly.Type.FOOD, 0, false));
-            fields.Add(new Tuple<string, Monopoly.Type, int, bool>("Lamoda", Monopoly.Type.CLOTHER, 0, false));
-            fields.Add(new Tuple<string, Monopoly.Type, int, bool>("Air Baltic", Monopoly.Type.TRAVEL, 0, false));
-            fields.Add(new Tuple<string, Monopoly.Type, int, bool>("Nordavia", Monopoly.Type.TRAVEL, 0, false));
-            fields.Add(new Tuple<string, Monopoly.Type, int, bool>("Prison", Monopoly.Type.PRISON, 0, false));
-            fields.Add(new Tuple<string, Monopoly.Type, int, bool>("MCDonald", Monopoly.Type.FOOD, 0, false));
-            fields.Add(new Tuple<string, Monopoly.Type, int, bool>("TESLA", Monopoly.Type.AUTO, 0, false));
+
+            fields.Add(new Field { Name = "Ford", Type = Type.AUTO, Price = 0, IsBought = false });
+            fields.Add(new Field { Name = "MCDonald", Type = Type.FOOD, Price = 0, IsBought = false });
+
+            fields.Add(new Field { Name = "Lamoda", Type = Type.CLOTHER, Price = 0, IsBought = false });
+            fields.Add(new Field { Name = "Air Baltic", Type = Type.TRAVEL, Price = 0, IsBought = false });
+            fields.Add(new Field { Name = "Nordavia", Type = Type.TRAVEL, Price = 0, IsBought = false });
+            fields.Add(new Field { Name = "Prison", Type = Type.PRISON, Price = 0, IsBought = false });
+            fields.Add(new Field { Name = "MCDonald", Type = Type.FOOD, Price = 0, IsBought = false });
+            fields.Add(new Field { Name = "TESLA", Type = Type.AUTO, Price = 0, IsBought = false });
         }
 
-        internal List<Tuple<string, int>> GetPlayersList()
+        internal List<Player> GetPlayersList()
         {
             return players;
         }
 
-        internal enum Type
-        {
-            AUTO,
-            FOOD,
-            CLOTHER,
-            TRAVEL,
-            PRISON,
-            BANK
-        }
 
-        internal List<Tuple<string, Monopoly.Type, int, bool>> GetFieldsList()
+        internal List<Field> GetFieldsList()
         {
             return fields;
         }
 
-        internal Tuple<string, Type, int, bool> GetFieldByName(string v)
+        internal Field GetFieldByName(string fieldName)
         {
-            return (from p in fields where p.Item1 == v select p).FirstOrDefault();
+            return (from p in fields where p.Name == fieldName select p).FirstOrDefault();
         }
 
         internal bool Buy(int v, Tuple<string, Type, int, bool> k)
         {
             var x = GetPlayerInfo(v);
             int cash = 0;
-            switch(k.Item2)
+            switch (k.Item2)
             {
                 case Type.AUTO:
                     if (k.Item3 != 0)
@@ -88,7 +82,7 @@ namespace Monopoly
                 .Where(n => n.name == x.Item1)
                 .Select(p => p.index).FirstOrDefault();
             fields[i] = new Tuple<string, Type, int, bool>(k.Item1, k.Item2, v, k.Item4);
-             return true;
+            return true;
         }
 
         internal Tuple<string, int> GetPlayerInfo(int v)
@@ -100,14 +94,14 @@ namespace Monopoly
         {
             var z = GetPlayerInfo(v);
             Tuple<string, int> o = null;
-            switch(k.Item2)
+            switch (k.Item2)
             {
                 case Type.AUTO:
                     if (k.Item3 == 0)
                         return false;
-                    o =  GetPlayerInfo(k.Item3);
+                    o = GetPlayerInfo(k.Item3);
                     z = new Tuple<string, int>(z.Item1, z.Item2 - 250);
-                    o = new Tuple<string, int>(o.Item1,o.Item2 + 250);
+                    o = new Tuple<string, int>(o.Item1, o.Item2 + 250);
                     break;
                 case Type.FOOD:
                     if (k.Item3 == 0)
@@ -142,7 +136,7 @@ namespace Monopoly
                     return false;
             }
             players[v - 1] = z;
-            if(o != null)
+            if (o != null)
                 players[k.Item3 - 1] = o;
             return true;
         }
